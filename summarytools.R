@@ -48,22 +48,25 @@ tab = function(arr, sortd = F) {
   vals = tb$Freq
   valstot = sum(vals)
   pers = round(vals / sum(vals) * 100, 1)
-  perstot = sum(pers)
+  perstot = 100# sum(pers)
   cpers = cumsum(pers)
   vals = unlist(lapply(vals, function(x) addc(x)))
   
-  nams = paste(padr(nams, 25), '...:', sep = '')
+  w = max(nchar(c('Category', as.character(nams)))) * 1.5
+  if (w > round(options()$width / 2, 0)) w = round(options()$width / 2, 0)
+  
+  nams = paste(padr(nams, w), '...:', sep = '')
   maxd = max(nchar(as.character(vals))) + 4
   vals = padl(vals, maxd)
   pers = padl(pers, maxd)
   cpers = padl(cpers, maxd)
   
   cat('\n',
-      padr('Category', 31),
+      padr('Category', w+maxd),
       padl('Freq.', maxd),
       padl('%', maxd),
       padl('Cum.%', maxd),
-      '\n', cs('=', 37+maxd*3)
+      '\n', cs('=', w+6+maxd*4)
   )
   
   if (nrow(tb) < 20) {
@@ -90,9 +93,9 @@ tab = function(arr, sortd = F) {
     
   }
   
-  cat('\n', cs('-', 37+maxd*3))
+  cat('\n', cs('-', w+6+maxd*4))
   cat('\n',
-      paste(padr('TOTAL', 27), '...:', sep = ''),
+      paste(padr('TOTAL', w+2), '...:', sep = ''),
       padl(addc(valstot), maxd), padl(perstot, maxd), '\n\n')
   
 }
