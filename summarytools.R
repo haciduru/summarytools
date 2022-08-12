@@ -1,6 +1,6 @@
 
-tab = function(arr) {
-
+tab = function(arr, sortd = F) {
+  
   cs = function(c, n = 30) {
     s = c; for (i in 1:n) s = paste(s, c, sep = '')
     return(s)
@@ -41,9 +41,11 @@ tab = function(arr) {
   }
   
   tb = table(arr, useNA = 'ifany')
+  tb = as.data.frame(tb)
+  if (sortd) tb = tb[order(-tb$Freq), ]
   
-  nams = names(tb)
-  vals = as.numeric(tb)
+  nams = tb$arr
+  vals = tb$Freq
   valstot = sum(vals)
   pers = round(vals / sum(vals) * 100, 1)
   perstot = sum(pers)
@@ -51,7 +53,7 @@ tab = function(arr) {
   vals = unlist(lapply(vals, function(x) addc(x)))
   
   nams = paste(padr(nams, 25), '...:', sep = '')
-  maxd = max(nchar(as.character(vals))) + 2
+  maxd = max(nchar(as.character(vals))) + 4
   vals = padl(vals, maxd)
   pers = padl(pers, maxd)
   cpers = padl(cpers, maxd)
@@ -63,16 +65,35 @@ tab = function(arr) {
       padl('Cum.%', maxd),
       '\n', cs('=', 37+maxd*3)
   )
-  i = 0
-  while (i < length(nams)) {
-    i = i + 1
-    cat('\n  ', nams[i], vals[i], pers[i], cpers[i])
+  
+  if (nrow(tb) < 20) {
+    
+    i = 0
+    while (i < length(nams)) {
+      i = i + 1
+      cat('\n  ', nams[i], vals[i], pers[i], cpers[i])
+    }
+    
+  } else {
+    
+    i = 0
+    while (i < 10) {
+      i = i + 1
+      cat('\n  ', nams[i], vals[i], pers[i], cpers[i])
+    }
+    cat('\n')
+    i = length(nams) - 10
+    while (i < length(nams)) {
+      i = i + 1
+      cat('\n  ', nams[i], vals[i], pers[i], cpers[i])
+    }
+    
   }
+  
   cat('\n', cs('-', 37+maxd*3))
-  
-  
   cat('\n',
       paste(padr('TOTAL', 27), '...:', sep = ''),
       padl(addc(valstot), maxd), padl(perstot, maxd), '\n\n')
   
 }
+                       
