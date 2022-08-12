@@ -1,4 +1,3 @@
-
 tab = function(arr, sortd = F) {
   
   cs = function(c, n = 30) {
@@ -44,7 +43,7 @@ tab = function(arr, sortd = F) {
   tb = as.data.frame(tb)
   if (sortd) tb = tb[order(-tb$Freq), ]
   
-  nams = tb$arr
+  nams = as.character(tb$arr)
   vals = tb$Freq
   valstot = sum(vals)
   pers = round(vals / sum(vals) * 100, 1)
@@ -52,6 +51,7 @@ tab = function(arr, sortd = F) {
   cpers = cumsum(pers)
   vals = unlist(lapply(vals, function(x) addc(x)))
   
+  nams[is.na(nams)] = 'NA'
   w = max(nchar(c('Category', as.character(nams)))) * 1.5
   if (w > round(options()$width / 2, 0)) w = round(options()$width / 2, 0)
   
@@ -99,4 +99,3 @@ tab = function(arr, sortd = F) {
       padl(addc(valstot), maxd), padl(perstot, maxd), '\n\n')
   
 }
-                       
