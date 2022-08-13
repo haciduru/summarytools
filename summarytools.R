@@ -1,4 +1,5 @@
-tab = function(arr, sortd = F) {
+
+tab = function(arr) {
   
   cs = function(c, n = 30) {
     s = c; for (i in 1:n) s = paste(s, c, sep = '')
@@ -38,64 +39,48 @@ tab = function(arr, sortd = F) {
     }
     return(s)
   }
-  
+
   tb = table(arr, useNA = 'ifany')
-  tb = as.data.frame(tb)
-  if (sortd) tb = tb[order(-tb$Freq), ]
   
-  nams = as.character(tb$arr)
-  vals = tb$Freq
+  nams = names(tb)
+  nams = paste('  ', nams, sep = '')
+  
+  vals = as.numeric(tb)
   valstot = sum(vals)
+  
   pers = round(vals / sum(vals) * 100, 1)
-  perstot = 100# sum(pers)
+  perstot = sum(pers)
   cpers = cumsum(pers)
+  
   vals = unlist(lapply(vals, function(x) addc(x)))
+  valstot = addc(valstot) 
   
-  nams[is.na(nams)] = 'NA'
-  w = max(nchar(c('Category', as.character(nams)))) * 1.5
-  if (w > round(options()$width / 2, 0)) w = round(options()$width / 2, 0)
+  ow = floor((options()$width) / 2)
+  if (max(nchar(nams)) < ow) ow = max(nchar(nams))
   
-  nams = paste(padr(nams, w), '...:', sep = '')
-  maxd = max(nchar(as.character(vals))) + 4
+  maxd = max(nchar(as.character(vals))) + 2
+  
+  nams = padr(nams, ow)
   vals = padl(vals, maxd)
   pers = padl(pers, maxd)
   cpers = padl(cpers, maxd)
   
   cat('\n',
-      padr('Category', w+maxd),
+      padr('Category', ow),
       padl('Freq.', maxd),
       padl('%', maxd),
       padl('Cum.%', maxd),
-      '\n', cs('=', w+6+maxd*4)
+      '\n', cs('=', ow+maxd*3+5)
   )
-  
-  if (nrow(tb) < 20) {
-    
-    i = 0
-    while (i < length(nams)) {
-      i = i + 1
-      cat('\n  ', nams[i], vals[i], pers[i], cpers[i])
-    }
-    
-  } else {
-    
-    i = 0
-    while (i < 10) {
-      i = i + 1
-      cat('\n  ', nams[i], vals[i], pers[i], cpers[i])
-    }
-    cat('\n')
-    i = length(nams) - 10
-    while (i < length(nams)) {
-      i = i + 1
-      cat('\n  ', nams[i], vals[i], pers[i], cpers[i])
-    }
-    
+  i = 0
+  while (i < length(nams)) {
+    i = i + 1
+    cat('\n', nams[i], vals[i], pers[i], cpers[i])
   }
+  cat('\n', cs('-', ow+maxd*3+5))
   
-  cat('\n', cs('-', w+6+maxd*4))
   cat('\n',
-      paste(padr('TOTAL', w+2), '...:', sep = ''),
+      padr('TOTAL', ow),
       padl(addc(valstot), maxd), padl(perstot, maxd), '\n\n')
   
 }
